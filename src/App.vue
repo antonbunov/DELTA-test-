@@ -8,38 +8,37 @@
       </th>
     </thead>
     <tbody class="table__body" v-for="(value, index) in table">
-      <tr class="table__row">
-        <td class="table__row-title" scope="row">
-          {{ value.label }}
-        </td>
-        <td class="table__row-today">
-          {{ days[0].today[index] }}
-        </td>
-        <td class="table__row-yesterday">
-          {{ days[1].yesterday[index] }}
-          <span v-bind:class='{
-            "red": relate < 0,
-            "green": relate > 0,
-          }'>
-            {{ currentRelate(days[0].today[index], days[1].yesterday[index]) }} %</span>
+      <el-collapse v-model="activeNames" @change="handleChange">
+        <el-collapse-item title="Consistency" name='{{ index }}'>
+          <tr class="table__row">
+            <td class="table__row-title" scope="row">
+              {{ value.label }} 
+            </td>
+            <td class="table__row-today">
+              {{ days[0].today[index] }}
+            </td>
+            <td class="table__row-yesterday">
+              {{ days[1].yesterday[index] }}
+              <span v-bind:class='{
+                "red": relate < 0,
+                "green": relate > 0,
+              }'>
+                {{ currentRelate(days[0].today[index], days[1].yesterday[index]) }} %</span>
 
-        </td>
-        <td class="table__row-day-of-week">
-          {{ days[0].today[index] }}
-        </td>
+            </td>
+            <td class="table__row-day-of-week">
+              {{ days[0].today[index] }}
+            </td>
 
-      </tr>
-      <tr>
-        <td colspan="4">
-          <highcharts :options="chartOptions"></highcharts>
-        </td>
-      </tr>
+          </tr>
+          <tr>
+            <td colspan="4">
+              <highcharts :options="chartOptions"></highcharts>
+            </td>
+          </tr>
 
-      <!-- <tr>
-        <td colspan="4" v-for="(value, index) in table">
-          <highcharts :options="chartOptions"></highcharts>
-        </td>
-      </tr> -->
+        </el-collapse-item>
+      </el-collapse>
     </tbody>
   </table>
 
@@ -49,9 +48,11 @@
 .table {
   border-collapse: separate;
 }
-[colspan="4"]{
+
+[colspan="4"] {
   padding: 0;
 }
+
 td,
 th {
   background-color: #fafafa;
@@ -103,8 +104,9 @@ export default {
         },
         title: false,
         series: [{
-          data: [10, 0, 8, 2, 6, 4, 5, 5],
-          // data: this.dayOfWeek[1],
+          //data: newGraph,
+          data: [1, 3, 10,]
+          // data: this.dayOfWeek.slice(1),
         }]
       },
       title: ''
@@ -116,9 +118,10 @@ export default {
       this.relate = (today - yesterday) / yesterday * 100
       return (today - yesterday) / yesterday * 100
     },
-    newGraph(value, key){
-        console.log(value, key)
-    }
+    newGraph(value, key) {
+      // console.log(value, key)
+      return this.chartOptions.series.data[0] = 11
+    },
   },
   watch: {
     title(newValue) {
