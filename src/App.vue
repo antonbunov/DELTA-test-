@@ -8,37 +8,38 @@
       </th>
     </thead>
     <tbody class="table__body" v-for="(value, index) in table">
-      <el-collapse v-model="activeNames" @change="handleChange">
+      <!-- <el-collapse v-model="activeNames" @change="handleChange">
         <el-collapse-item title="Consistency" name='{{ index }}'>
-          <tr class="table__row">
-            <td class="table__row-title" scope="row">
-              {{ value.label }} 
-            </td>
-            <td class="table__row-today">
-              {{ days[0].today[index] }}
-            </td>
-            <td class="table__row-yesterday">
-              {{ days[1].yesterday[index] }}
-              <span v-bind:class='{
-                "red": relate < 0,
-                "green": relate > 0,
-              }'>
-                {{ currentRelate(days[0].today[index], days[1].yesterday[index]) }} %</span>
-
-            </td>
-            <td class="table__row-day-of-week">
-              {{ days[0].today[index] }}
-            </td>
-
-          </tr>
-          <tr>
-            <td colspan="4">
-              <highcharts :options="chartOptions"></highcharts>
-            </td>
-          </tr>
-
         </el-collapse-item>
-      </el-collapse>
+      </el-collapse> -->
+      <tr class="table__row" v-on:click="openGraphic(index)">
+        <td class="table__row-title" scope="row">
+          {{ value.label }}
+        </td>
+        <td class="table__row-today">
+          {{ prettify(days[0].today[index]) }}
+        </td>
+        <td class="table__row-yesterday">
+          {{ prettify(days[1].yesterday[index]) }}
+          <span v-bind:class='{
+            "red": relate < 0,
+            "green": relate > 0,
+          }'>
+            {{ Math.round(currentRelate(days[0].today[index], days[1].yesterday[index])) }} %</span>
+
+        </td>
+        <td class="table__row-day-of-week">
+          {{ prettify(days[0].today[index]) }}
+        </td>
+
+      </tr>
+      <tr>
+        <td colspan="4" v-if="selected == index">
+          <highcharts :options="chartOptions"></highcharts>
+        </td>
+      </tr>
+
+
     </tbody>
   </table>
 
@@ -77,6 +78,8 @@ export default {
 
   data() {
     return {
+      test: 10,
+      selected: false,
       relate: false,
       columns: ['Показатель', 'Текущий день', 'Вчера', 'Этот день недели'],
       table: [
@@ -105,7 +108,9 @@ export default {
         title: false,
         series: [{
           //data: newGraph,
-          data: [1, 3, 10,]
+
+          // data: [1, 3, 10,]
+          data: [this.test],
           // data: this.dayOfWeek.slice(1),
         }]
       },
@@ -119,9 +124,19 @@ export default {
       return (today - yesterday) / yesterday * 100
     },
     newGraph(value, key) {
-      // console.log(value, key)
-      return this.chartOptions.series.data[0] = 11
+      this.$set(
+        this.chartOptions.series[0].data = 100
+        // index,
+        // (Math.random() * 1000) | 0
+      );
     },
+    prettify(num) {
+      let n = num.toString();
+      return n.replace(/(\d{1,3}(?=(?:\d\d\d)+(?!\d)))/g, "$1" + ' ');
+    },
+    openGraphic(index) {
+      this.selected = index
+    }
   },
   watch: {
     title(newValue) {
